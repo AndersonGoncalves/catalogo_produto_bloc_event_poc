@@ -6,11 +6,12 @@ import 'package:catalogo_produto_poc/app/core/ui/functions.dart';
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_loading_page.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_text_form_field.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_bloc.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_event.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_foto_grid.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_state.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_calculadora_preco_page.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_state.dart';
 
 class ProdutoFormPage extends StatefulWidget {
   const ProdutoFormPage({super.key});
@@ -118,7 +119,7 @@ class _ProdutoFormPageState extends State<ProdutoFormPage> {
     final formValid = _formKey.currentState?.validate() ?? false;
     if (formValid) {
       _formKey.currentState?.save();
-      await context.read<ProdutoController>().save(_formData);
+      BlocProvider.of<ProdutoBloc>(context).add(ProdutoSaveEvent(_formData));
     }
   }
 
@@ -166,7 +167,7 @@ class _ProdutoFormPageState extends State<ProdutoFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProdutoController, ProdutoState>(
+    return BlocConsumer<ProdutoBloc, ProdutoState>(
       listener: (context, state) {
         _isLoading = state.isLoading;
         if (state.error != null && state.error!.isNotEmpty) {

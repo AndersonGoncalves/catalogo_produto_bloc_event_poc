@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_pesquisa.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_bloc.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_event.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_grid_item.dart';
 
 class ProdutoGrid extends StatefulWidget {
   final List<Produto> _produtos;
-  final ProdutoController _controller;
+  final ProdutoBloc _controller;
 
   const ProdutoGrid({
     super.key,
     required List<Produto> produtos,
-    required ProdutoController controller,
+    required ProdutoBloc controller,
   }) : _produtos = produtos,
        _controller = controller;
 
@@ -22,8 +23,9 @@ class ProdutoGrid extends StatefulWidget {
 class _ProdutoGridState extends State<ProdutoGrid> {
   List<Produto> produtos = [];
 
-  Future<void> _refresh(BuildContext context) {
-    return widget._controller.load();
+  Future<void> _refresh() async {
+    // return widget._controller.load();
+    widget._controller.add(ProdutoLoadEvent());
   }
 
   void _onSearch(String value) {
@@ -58,7 +60,7 @@ class _ProdutoGridState extends State<ProdutoGrid> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () => _refresh(context),
+      onRefresh: () => _refresh(),
       child: Column(
         children: <Widget>[
           widget._produtos.isNotEmpty

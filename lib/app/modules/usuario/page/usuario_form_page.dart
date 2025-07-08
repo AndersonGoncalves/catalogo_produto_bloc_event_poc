@@ -5,8 +5,9 @@ import 'package:catalogo_produto_poc/app/core/ui/messages.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_loading_page.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_text_form_field.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_text_button.dart';
-import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_controller.dart';
-import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_state.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_state.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_bloc.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_event.dart';
 
 enum AuthMode { signup, login }
 
@@ -47,24 +48,30 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
 
     if (formValid) {
       _formKey.currentState?.save();
-      UsuarioController usuarioController = context.read<UsuarioController>();
+      UsuarioBloc usuarioController = context.read<UsuarioBloc>();
 
       if (_isLogin) {
-        await usuarioController.login(
-          _formData['email']!,
-          _formData['password']!,
+        usuarioController.add(
+          UsuarioLoginEvent(
+            email: _formData['email']!,
+            password: _formData['password']!,
+          ),
         );
       } else {
         if (widget.usuarioAnonimo) {
-          await usuarioController.converterContaAnonimaEmPermanente(
-            _formData['email']!,
-            _formData['password']!,
+          usuarioController.add(
+            UsuarioConverterContaAnonimaEmPermanenteEvent(
+              email: _formData['email']!,
+              password: _formData['password']!,
+            ),
           );
         } else {
-          await usuarioController.register(
-            _formData['name']!,
-            _formData['email']!,
-            _formData['password']!,
+          usuarioController.add(
+            UsuarioRegisterEvent(
+              name: _formData['name']!,
+              email: _formData['email']!,
+              password: _formData['password']!,
+            ),
           );
         }
       }
@@ -75,8 +82,7 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
     if (widget.usuarioAnonimo) {
       Navigator.of(context).pop();
     } else {
-      UsuarioController usuarioController = context.read<UsuarioController>();
-      await usuarioController.loginAnonimo();
+      context.read<UsuarioBloc>().add(UsuarioLoginAnonimoEvent());
     }
   }
 
@@ -106,7 +112,7 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<UsuarioController, UsuarioState>(
+    return BlocConsumer<UsuarioBloc, UsuarioState>(
       listener: (context, state) {
         if (state.success) {
           Navigator.of(context).pop();
@@ -367,9 +373,11 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
                                                           onPressed: () {
                                                             context
                                                                 .read<
-                                                                  UsuarioController
+                                                                  UsuarioBloc
                                                                 >()
-                                                                .googleLogin();
+                                                                .add(
+                                                                  UsuarioGoogleLoginEvent(),
+                                                                );
                                                           },
                                                         ),
                                                       ),
@@ -380,14 +388,13 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
                                                 ? WidgetTextButton(
                                                     'Esqueceu a senha?',
                                                     onPressed: () async {
-                                                      await context
-                                                          .read<
-                                                            UsuarioController
-                                                          >()
-                                                          .esqueceuSenha(
-                                                            _emailController
-                                                                .text,
-                                                          );
+                                                      context.read<UsuarioBloc>().add(
+                                                        UsuarioEsqueceuSenhaEvent(
+                                                          email:
+                                                              _emailController
+                                                                  .text,
+                                                        ),
+                                                      );
                                                       Messages.of(context).info(
                                                         'Recuperação de senha enviada para email informado',
                                                       );

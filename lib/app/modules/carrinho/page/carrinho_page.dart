@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:catalogo_produto_poc/app/core/ui/theme_extensions.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_item.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_bloc.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_event.dart';
 
 class CarrinhoPage extends StatelessWidget {
   const CarrinhoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final CarrinhoController carrinhoServiceImpl =
-        Provider.of<CarrinhoController>(context);
+    final CarrinhoBloc carrinhoServiceImpl = Provider.of<CarrinhoBloc>(context);
     final items = carrinhoServiceImpl.items.values.toList();
 
     return Scaffold(
@@ -66,7 +66,7 @@ class CarrinhoPage extends StatelessWidget {
 class CartButton extends StatefulWidget {
   const CartButton({super.key, required this.cart});
 
-  final CarrinhoController cart;
+  final CarrinhoBloc cart;
 
   @override
   State<CartButton> createState() => _CartButtonState();
@@ -85,7 +85,8 @@ class _CartButtonState extends State<CartButton> {
                 : () async {
                     setState(() => _isLoading = true);
                     //TODO: Chamar a page do pedido
-                    widget.cart.clear();
+                    widget.cart.add(CarrinhoClearEvent());
+
                     setState(() => _isLoading = false);
                   },
             child: Text(

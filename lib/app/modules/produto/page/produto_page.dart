@@ -6,8 +6,9 @@ import 'package:catalogo_produto_poc/app/core/constants/rotas.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_loading_page.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_list.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_grid.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_controller.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_state.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_bloc.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_event.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_state.dart';
 
 enum ProdutoPageMode { list, grid }
 
@@ -29,7 +30,8 @@ class _ProdutoPageState extends State<ProdutoPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ProdutoController>().load();
+    // context.read<ProdutoController>().load();
+    BlocProvider.of<ProdutoBloc>(context).add(ProdutoLoadEvent());
   }
 
   List<Produto> _produtos(ProdutoState state) {
@@ -42,7 +44,7 @@ class _ProdutoPageState extends State<ProdutoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProdutoController, ProdutoState>(
+    return BlocConsumer<ProdutoBloc, ProdutoState>(
       listener: (context, state) {
         if (state.error != null && state.error!.isNotEmpty) {
           Messages.of(context).showError(state.error!);
@@ -90,11 +92,11 @@ class _ProdutoPageState extends State<ProdutoPage> {
                 : widget._produtoPageMode == ProdutoPageMode.list
                 ? ProdutoList(
                     produtos: _produtos(state),
-                    controller: context.read<ProdutoController>(),
+                    controller: context.read<ProdutoBloc>(),
                   )
                 : ProdutoGrid(
                     produtos: _produtos(state),
-                    controller: context.read<ProdutoController>(),
+                    controller: context.read<ProdutoBloc>(),
                   ),
           ),
           floatingActionButton: widget._produtoPageMode == ProdutoPageMode.list

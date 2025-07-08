@@ -1,16 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/services/produto/produto_service.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_state.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_event.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_state.dart';
 
-class ProdutoController extends Cubit<ProdutoState> {
+class ProdutoBloc extends Bloc<ProdutoEvent, ProdutoState> {
   final ProdutoService _produtoService;
 
-  ProdutoController({required ProdutoService produtoService})
+  ProdutoBloc({required ProdutoService produtoService})
     : _produtoService = produtoService,
-      super(ProdutoState());
+      super(ProdutoState()) {
+    on<ProdutoLoadEvent>(_onLoadProdutos);
+    on<ProdutoSaveEvent>(_onSaveProduto);
+    on<ProdutoRemoveEvent>(_onRemoveProduto);
+  }
 
-  Future<void> load() async {
+  Future<void> _onLoadProdutos(
+    ProdutoLoadEvent event,
+    Emitter<ProdutoState> emit,
+  ) async {
     emit(state.copyWith(error: null, success: false, isLoading: true));
     try {
       await _produtoService.get();
@@ -32,10 +39,13 @@ class ProdutoController extends Cubit<ProdutoState> {
     }
   }
 
-  Future<void> save(Map<String, dynamic> map) async {
+  Future<void> _onSaveProduto(
+    ProdutoSaveEvent event,
+    Emitter<ProdutoState> emit,
+  ) async {
     emit(state.copyWith(error: null, success: false, isLoading: true));
     try {
-      await _produtoService.save(map);
+      await _produtoService.save(event.map);
       await _produtoService.get();
       emit(
         state.copyWith(
@@ -55,10 +65,13 @@ class ProdutoController extends Cubit<ProdutoState> {
     }
   }
 
-  Future<void> remove(Produto produto) async {
+  Future<void> _onRemoveProduto(
+    ProdutoRemoveEvent event,
+    Emitter<ProdutoState> emit,
+  ) async {
     emit(state.copyWith(error: null, success: false, isLoading: true));
     try {
-      await _produtoService.delete(produto);
+      await _produtoService.delete(event.produto);
       await _produtoService.get();
       emit(
         state.copyWith(
@@ -71,7 +84,7 @@ class ProdutoController extends Cubit<ProdutoState> {
       emit(
         state.copyWith(
           error: 'Erro ao remover produto: ${e.toString()}',
-          success: true,
+          success: false,
           isLoading: false,
         ),
       );

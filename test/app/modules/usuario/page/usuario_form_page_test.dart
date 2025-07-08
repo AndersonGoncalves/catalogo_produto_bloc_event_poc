@@ -1,11 +1,11 @@
-import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_bloc.dart';
 import 'package:catalogo_produto_poc/app/modules/usuario/page/usuario_form_page.dart';
 import 'package:catalogo_produto_poc/app/repositories/usuario/usuario_repository.dart';
 import 'package:catalogo_produto_poc/app/services/usuario/usuario_service_impl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 class FakeUsuarioRepository implements UsuarioRepository {
   @override
@@ -64,9 +64,9 @@ void main() async {
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
-            home: BlocProvider<UsuarioController>(
+            home: BlocProvider<UsuarioBloc>(
               create: (_) =>
-                  UsuarioController(usuarioService: MockUsuarioServiceImpl()),
+                  UsuarioBloc(usuarioService: MockUsuarioServiceImpl()),
               child: const UsuarioFormPage(usuarioAnonimo: true),
             ),
           ),
@@ -80,9 +80,9 @@ void main() async {
     testWidgets('deve exibir a mensagem de email inválido', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: BlocProvider<UsuarioController>(
+          home: BlocProvider<UsuarioBloc>(
             create: (_) =>
-                UsuarioController(usuarioService: MockUsuarioServiceImpl()),
+                UsuarioBloc(usuarioService: MockUsuarioServiceImpl()),
             child: const UsuarioFormPage(usuarioAnonimo: true),
           ),
         ),

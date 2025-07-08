@@ -6,8 +6,8 @@ import 'package:catalogo_produto_poc/app/services/usuario/usuario_service_impl.d
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_page.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_badgee.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_page.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_controller.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_state.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_bloc.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_state.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: <Widget>[
-          BlocConsumer<CarrinhoController, CarrinhoState>(
+          BlocConsumer<CarrinhoBloc, CarrinhoState>(
             listener: (context, state) {
               if (state.error != null && state.error!.isNotEmpty) {
                 ScaffoldMessenger.of(
@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 BottomNavigationBarItem(
                   backgroundColor: Theme.of(context).colorScheme.primary,
-                  icon: BlocConsumer<CarrinhoController, CarrinhoState>(
+                  icon: BlocConsumer<CarrinhoBloc, CarrinhoState>(
                     listener: (context, state) {
                       if (state.error != null && state.error!.isNotEmpty) {
                         ScaffoldMessenger.of(

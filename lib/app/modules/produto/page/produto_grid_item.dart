@@ -5,7 +5,8 @@ import 'package:catalogo_produto_poc/app/core/ui/messages.dart';
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/ui/theme_extensions.dart';
 import 'package:catalogo_produto_poc/app/core/constants/rotas.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_bloc.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_event.dart';
 
 class ProdutoGridItem extends StatefulWidget {
   final Produto _produto;
@@ -26,7 +27,7 @@ class _ProdutoGridItemState extends State<ProdutoGridItem> {
       decimalDigits: 2,
     );
 
-    final carrinho = context.read<CarrinhoController>();
+    final carrinho = context.read<CarrinhoBloc>();
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),
@@ -52,10 +53,12 @@ class _ProdutoGridItemState extends State<ProdutoGridItem> {
                 'Produto adicionado no carrinho!',
                 'DESFAZER',
                 () {
-                  carrinho.removeSingleItem(widget._produto.id);
+                  carrinho.add(
+                    CarrinhoRemoveSingleItemEvent(widget._produto.id),
+                  );
                 },
               );
-              carrinho.add(widget._produto);
+              carrinho.add(CarrinhoAddEvent(widget._produto));
             },
           ),
         ),

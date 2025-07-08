@@ -1,31 +1,39 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/models/carrinho.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_event.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_state.dart';
 import 'package:catalogo_produto_poc/app/services/carrinho/carrinho_service.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_state.dart';
 
-class CarrinhoController extends Cubit<CarrinhoState> {
+class CarrinhoBloc extends Bloc<CarrinhoEvent, CarrinhoState> {
   final CarrinhoService _carrinhoService;
 
-  CarrinhoController({required CarrinhoService carrinhoService})
+  CarrinhoBloc({required CarrinhoService carrinhoService})
     : _carrinhoService = carrinhoService,
-      super(CarrinhoState());
+      super(CarrinhoState()) {
+    on<CarrinhoAddEvent>(_onCarrinhoAdd);
+    on<CarrinhoRemoveEvent>(_onCarrinhoRemove);
+    on<CarrinhoRemoveSingleItemEvent>(_onCarrinhoRemoveSingleItem);
+    on<CarrinhoClearEvent>(_onCarrinhoClear);
+  }
 
   Map<String, Carrinho> get items => _carrinhoService.items;
-
   int get quantidadeItem => _carrinhoService.quantidadeItem;
-
   double get valorTotal => _carrinhoService.valorTotal;
 
-  void add(Produto produto) {
+  Future<void> _onCarrinhoAdd(
+    CarrinhoAddEvent event,
+    Emitter<CarrinhoState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
-      _carrinhoService.add(produto);
+      _carrinhoService.add(event.produto);
       emit(
         state.copyWith(
           items: _carrinhoService.items.values.toList(),
           isLoading: false,
           success: true,
+          // quantidadeItem: _carrinhoService.quantidadeItem,
+          // valorTotal: _carrinhoService.valorTotal,
         ),
       );
     } catch (e) {
@@ -39,15 +47,20 @@ class CarrinhoController extends Cubit<CarrinhoState> {
     }
   }
 
-  void remove(String produtoId) {
+  Future<void> _onCarrinhoRemove(
+    CarrinhoRemoveEvent event,
+    Emitter<CarrinhoState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
-      _carrinhoService.remove(produtoId);
+      _carrinhoService.remove(event.produtoId);
       emit(
         state.copyWith(
           items: _carrinhoService.items.values.toList(),
           isLoading: false,
           success: true,
+          // quantidadeItem: _carrinhoService.quantidadeItem,
+          // valorTotal: _carrinhoService.valorTotal,
         ),
       );
     } catch (e) {
@@ -61,15 +74,20 @@ class CarrinhoController extends Cubit<CarrinhoState> {
     }
   }
 
-  void removeSingleItem(String produtoId) {
+  Future<void> _onCarrinhoRemoveSingleItem(
+    CarrinhoRemoveSingleItemEvent event,
+    Emitter<CarrinhoState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
-      _carrinhoService.removeSingleItem(produtoId);
+      _carrinhoService.removeSingleItem(event.produtoId);
       emit(
         state.copyWith(
           items: _carrinhoService.items.values.toList(),
           isLoading: false,
           success: true,
+          // quantidadeItem: _carrinhoService.quantidadeItem,
+          // valorTotal: _carrinhoService.valorTotal,
         ),
       );
     } catch (e) {
@@ -83,7 +101,10 @@ class CarrinhoController extends Cubit<CarrinhoState> {
     }
   }
 
-  void clear() {
+  Future<void> _onCarrinhoClear(
+    CarrinhoClearEvent event,
+    Emitter<CarrinhoState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
       _carrinhoService.clear();
@@ -92,6 +113,8 @@ class CarrinhoController extends Cubit<CarrinhoState> {
           items: _carrinhoService.items.values.toList(),
           isLoading: false,
           success: true,
+          // quantidadeItem: _carrinhoService.quantidadeItem,
+          // valorTotal: _carrinhoService.valorTotal,
         ),
       );
     } catch (e) {

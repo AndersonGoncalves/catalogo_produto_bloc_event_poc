@@ -1,19 +1,37 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:catalogo_produto_poc/app/core/exceptions/auth_exception.dart';
 import 'package:catalogo_produto_poc/app/services/usuario/usuario_service_impl.dart';
-import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_state.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_state.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_event.dart';
 
-class UsuarioController extends Cubit<UsuarioState> {
+class UsuarioBloc extends Bloc<UsuarioEvent, UsuarioState> {
   final UsuarioServiceImpl _usuarioService;
 
-  UsuarioController({required UsuarioServiceImpl usuarioService})
+  UsuarioBloc({required UsuarioServiceImpl usuarioService})
     : _usuarioService = usuarioService,
-      super(UsuarioState());
+      super(UsuarioState()) {
+    on<UsuarioRegisterEvent>(_onUsuarioRegister);
+    on<UsuarioLoginEvent>(_onUsuarioLogin);
+    on<UsuarioGoogleLoginEvent>(_onUsuarioGoogleLogin);
+    on<UsuarioLoginAnonimoEvent>(_onUsuarioLoginAnonimo);
+    on<UsuarioConverterContaAnonimaEmPermanenteEvent>(
+      _onUsuarioConverterContaAnonimaEmPermanente,
+    );
+    on<UsuarioLogoutEvent>(_onUsuarioLogout);
+    on<UsuarioEsqueceuSenhaEvent>(_onUsuarioEsqueceuSenha);
+  }
 
-  Future<void> register(String name, String email, String password) async {
+  Future<void> _onUsuarioRegister(
+    UsuarioRegisterEvent event,
+    Emitter<UsuarioState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
-      final user = await _usuarioService.register(name, email, password);
+      final user = await _usuarioService.register(
+        event.name,
+        event.email,
+        event.password,
+      );
       if (user != null) {
         emit(state.copyWith(isLoading: false, success: true));
       } else {
@@ -31,10 +49,13 @@ class UsuarioController extends Cubit<UsuarioState> {
     }
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> _onUsuarioLogin(
+    UsuarioLoginEvent event,
+    Emitter<UsuarioState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
-      final user = await _usuarioService.login(email, password);
+      final user = await _usuarioService.login(event.email, event.password);
       if (user != null) {
         emit(state.copyWith(isLoading: false, success: true));
       } else {
@@ -47,7 +68,10 @@ class UsuarioController extends Cubit<UsuarioState> {
     }
   }
 
-  Future<void> googleLogin() async {
+  Future<void> _onUsuarioGoogleLogin(
+    UsuarioGoogleLoginEvent event,
+    Emitter<UsuarioState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
       final user = await _usuarioService.googleLogin();
@@ -58,7 +82,7 @@ class UsuarioController extends Cubit<UsuarioState> {
         emit(
           state.copyWith(
             isLoading: false,
-            error: 'Erro ao realizar login com google',
+            error: 'Erro ao realizar login com Google',
           ),
         );
       }
@@ -67,13 +91,16 @@ class UsuarioController extends Cubit<UsuarioState> {
       emit(
         state.copyWith(
           isLoading: false,
-          error: 'Erro ao realizar login com google: ${e.toString()}',
+          error: 'Erro ao realizar login com Google: ${e.toString()}',
         ),
       );
     }
   }
 
-  Future<void> loginAnonimo() async {
+  Future<void> _onUsuarioLoginAnonimo(
+    UsuarioLoginAnonimoEvent event,
+    Emitter<UsuarioState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
       await _usuarioService.loginAnonimo();
@@ -83,15 +110,15 @@ class UsuarioController extends Cubit<UsuarioState> {
     }
   }
 
-  Future<void> converterContaAnonimaEmPermanente(
-    String email,
-    String password,
+  Future<void> _onUsuarioConverterContaAnonimaEmPermanente(
+    UsuarioConverterContaAnonimaEmPermanenteEvent event,
+    Emitter<UsuarioState> emit,
   ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
       final user = await _usuarioService.converterContaAnonimaEmPermanente(
-        email,
-        password,
+        event.email,
+        event.password,
       );
       if (user != null) {
         emit(state.copyWith(isLoading: false, success: true));
@@ -113,7 +140,10 @@ class UsuarioController extends Cubit<UsuarioState> {
     }
   }
 
-  Future<void> logout() async {
+  Future<void> _onUsuarioLogout(
+    UsuarioLogoutEvent event,
+    Emitter<UsuarioState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
       await _usuarioService.logout();
@@ -123,10 +153,13 @@ class UsuarioController extends Cubit<UsuarioState> {
     }
   }
 
-  Future<void> esqueceuSenha(String email) async {
+  Future<void> _onUsuarioEsqueceuSenha(
+    UsuarioEsqueceuSenhaEvent event,
+    Emitter<UsuarioState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true, error: null, success: false));
     try {
-      await _usuarioService.esqueceuSenha(email);
+      await _usuarioService.esqueceuSenha(event.email);
       emit(state.copyWith(isLoading: false, success: true));
     } on AuthException catch (e) {
       emit(state.copyWith(isLoading: false, error: e.message));
