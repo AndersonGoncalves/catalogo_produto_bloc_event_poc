@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_pesquisa.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_bloc.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_event.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_grid_item.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/bloc/produto_bloc.dart';
 
 class ProdutoGrid extends StatefulWidget {
   final List<Produto> _produtos;
-  final ProdutoBloc _controller;
 
-  const ProdutoGrid({
-    super.key,
-    required List<Produto> produtos,
-    required ProdutoBloc controller,
-  }) : _produtos = produtos,
-       _controller = controller;
+  const ProdutoGrid({super.key, required List<Produto> produtos})
+    : _produtos = produtos;
 
   @override
   State<ProdutoGrid> createState() => _ProdutoGridState();
@@ -24,8 +20,7 @@ class _ProdutoGridState extends State<ProdutoGrid> {
   List<Produto> produtos = [];
 
   Future<void> _refresh() async {
-    // return widget._controller.load();
-    widget._controller.add(ProdutoLoadEvent());
+    BlocProvider.of<ProdutoBloc>(context).add(ProdutoLoadEvent());
   }
 
   void _onSearch(String value) {
@@ -92,7 +87,7 @@ class _ProdutoGridState extends State<ProdutoGrid> {
                             mainAxisSpacing: 20,
                           ),
                       itemBuilder: (ctx, index) => ProdutoGridItem(
-                        key: GlobalObjectKey(produtos[index]),
+                        key: Key('grid_${produtos[index].id}'),
                         produto: produtos[index],
                       ),
                     ),

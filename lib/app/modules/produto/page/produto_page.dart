@@ -90,14 +90,8 @@ class _ProdutoPageState extends State<ProdutoPage> {
                     backgroundColor: Theme.of(context).canvasColor,
                   )
                 : widget._produtoPageMode == ProdutoPageMode.list
-                ? ProdutoList(
-                    produtos: _produtos(state),
-                    controller: context.read<ProdutoBloc>(),
-                  )
-                : ProdutoGrid(
-                    produtos: _produtos(state),
-                    controller: context.read<ProdutoBloc>(),
-                  ),
+                ? ProdutoList(produtos: _produtos(state))
+                : ProdutoGrid(produtos: _produtos(state)),
           ),
           floatingActionButton: widget._produtoPageMode == ProdutoPageMode.list
               ? FloatingActionButton(
