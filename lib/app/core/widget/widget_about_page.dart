@@ -96,7 +96,7 @@ class _WidgetAboutPageState extends State<WidgetAboutPage> {
                         ],
                       ),
                       Text(
-                        'Aplicativo de cadastro e gerenciamento de produtos com possibilidadede inclusão no carrinho de compras, desenvolvido por Anderson Gonçalves como uma prova de conceito utilizando Flutter, Dart e Firebase.',
+                        'Aplicativo de cadastro e gerenciamento de produtos com possibilidade de inclusão no carrinho de compras, desenvolvido por Anderson Gonçalves como uma prova de conceito utilizando Flutter, Dart e Firebase. Esse app utiliza o Bloc para gerenciar estados utilizando Events.',
                         style: TextStyle(
                           fontSize: 14,
                           color: context.primaryColor,
@@ -210,11 +210,31 @@ class _WidgetAboutPageState extends State<WidgetAboutPage> {
                         child: InkWell(
                           onTap: () {
                             UrlLauncher.openUrl(
+                              'https://pub.dev/packages/bloc',
+                            );
+                          },
+                          child: Text(
+                            '1.3 - Bloc (Gerenciamento de Estado)',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: context.primaryColor,
+                              // decoration: TextDecoration.underline,
+                            ),
+                            textAlign: TextAlign.justify,
+                          ),
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 7, left: 10),
+                        child: InkWell(
+                          onTap: () {
+                            UrlLauncher.openUrl(
                               'https://pub.dev/packages/provider',
                             );
                           },
                           child: Text(
-                            '1.3 - Provider (Provedor de gerência de estado)',
+                            '1.4 - Provider (Provedor de gerência de estado)',
                             style: TextStyle(
                               fontSize: 14,
                               color: context.primaryColor,
@@ -264,7 +284,7 @@ class _WidgetAboutPageState extends State<WidgetAboutPage> {
                             );
                           },
                           child: Text(
-                            '1.2 - Firebase Authentication (autenticação anônima e por e-mail)',
+                            '2.2 - Firebase Authentication (autenticação anônima e por e-mail)',
                             style: TextStyle(
                               fontSize: 14,
                               color: context.primaryColor,
