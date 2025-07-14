@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:catalogo_produto_poc/app/core/exceptions/auth_exception.dart';
 import 'package:catalogo_produto_poc/app/services/usuario/usuario_service_impl.dart';
 import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_state.dart';
@@ -6,6 +7,10 @@ import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_event.dart
 
 class UsuarioBloc extends Bloc<UsuarioEvent, UsuarioState> {
   final UsuarioServiceImpl _usuarioService;
+
+  User get user => _usuarioService.user;
+
+  Stream<User?> get authState => _usuarioService.authState;
 
   UsuarioBloc({required UsuarioServiceImpl usuarioService})
     : _usuarioService = usuarioService,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_drawer.dart';
-import 'package:catalogo_produto_poc/app/services/usuario/usuario_service_impl.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/bloc/usuario_bloc.dart';
 
 class WidgetErrorPage extends StatelessWidget {
   const WidgetErrorPage({super.key});
@@ -25,9 +25,7 @@ class WidgetErrorPage extends StatelessWidget {
           ),
         ),
       ),
-      drawer: WidgetDrawer(
-        userEmail: context.read<UsuarioServiceImpl>().user.email,
-      ),
+      drawer: WidgetDrawer(userEmail: context.read<UsuarioBloc>().user.email),
       body: SafeArea(
         child: Center(child: Text('Ocorreu um erro na aplicação')),
       ),
