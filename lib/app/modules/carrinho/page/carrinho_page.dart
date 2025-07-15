@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:catalogo_produto_poc/app/core/ui/theme_extensions.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_item.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_bloc.dart';
@@ -10,7 +10,7 @@ class CarrinhoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final carrinhoController = BlocProvider.of<CarrinhoBloc>(context);
+    final carrinhoController = Provider.of<CarrinhoBloc>(context);
     final items = carrinhoController.items.values.toList();
 
     return Scaffold(
