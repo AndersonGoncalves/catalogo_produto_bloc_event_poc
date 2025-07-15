@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:catalogo_produto_poc/app/core/ui/theme_extensions.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_item.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/bloc/carrinho_bloc.dart';
@@ -10,8 +10,8 @@ class CarrinhoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CarrinhoBloc carrinhoServiceImpl = Provider.of<CarrinhoBloc>(context);
-    final items = carrinhoServiceImpl.items.values.toList();
+    final carrinhoController = BlocProvider.of<CarrinhoBloc>(context);
+    final items = carrinhoController.items.values.toList();
 
     return Scaffold(
       body: Column(
@@ -20,17 +20,40 @@ class CarrinhoPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(15),
             child: Text(
-              'Itens do Carrinho:',
+              carrinhoController.items.isEmpty ? '' : 'Carrinho de Compras',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
 
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (ctx, i) => CarrinhoItem(carrinho: items[i]),
-            ),
-          ),
+          carrinhoController.items.isEmpty
+              ? Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.shopping_cart_outlined,
+                          size: 80,
+                          color: Colors.grey[400],
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Seu carrinho está vazio',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (ctx, i) => CarrinhoItem(carrinho: items[i]),
+                  ),
+                ),
 
           Card(
             color: Colors.white,
@@ -46,13 +69,13 @@ class CarrinhoPage extends StatelessWidget {
                   Chip(
                     backgroundColor: context.secondaryColor,
                     label: Text(
-                      'R\$${carrinhoServiceImpl.valorTotal.toStringAsFixed(2)}',
+                      'R\$${carrinhoController.valorTotal.toStringAsFixed(2)}',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   const Spacer(),
 
-                  CartButton(cart: carrinhoServiceImpl),
+                  CartButton(cart: carrinhoController),
                 ],
               ),
             ),
