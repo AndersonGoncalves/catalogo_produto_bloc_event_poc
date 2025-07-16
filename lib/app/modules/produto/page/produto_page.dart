@@ -30,8 +30,9 @@ class _ProdutoPageState extends State<ProdutoPage> {
   @override
   void initState() {
     super.initState();
-    // context.read<ProdutoController>().load();
-    BlocProvider.of<ProdutoBloc>(context).add(ProdutoLoadEvent());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<ProdutoBloc>(context).add(ProdutoLoadEvent());
+    });
   }
 
   List<Produto> _produtos(ProdutoState state) {
