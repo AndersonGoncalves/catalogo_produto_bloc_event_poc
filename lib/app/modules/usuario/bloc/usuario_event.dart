@@ -1,6 +1,6 @@
-abstract class UsuarioEvent {}
+abstract interface class UsuarioEvent {}
 
-class UsuarioRegisterEvent extends UsuarioEvent {
+class UsuarioRegisterEvent implements UsuarioEvent {
   final String name;
   final String email;
   final String password;
@@ -12,18 +12,18 @@ class UsuarioRegisterEvent extends UsuarioEvent {
   });
 }
 
-class UsuarioLoginEvent extends UsuarioEvent {
+class UsuarioLoginEvent implements UsuarioEvent {
   final String email;
   final String password;
 
   UsuarioLoginEvent({required this.email, required this.password});
 }
 
-class UsuarioGoogleLoginEvent extends UsuarioEvent {}
+class UsuarioGoogleLoginEvent implements UsuarioEvent {}
 
-class UsuarioLoginAnonimoEvent extends UsuarioEvent {}
+class UsuarioLoginAnonimoEvent implements UsuarioEvent {}
 
-class UsuarioConverterContaAnonimaEmPermanenteEvent extends UsuarioEvent {
+class UsuarioConverterContaAnonimaEmPermanenteEvent implements UsuarioEvent {
   final String email;
   final String password;
 
@@ -33,9 +33,9 @@ class UsuarioConverterContaAnonimaEmPermanenteEvent extends UsuarioEvent {
   });
 }
 
-class UsuarioLogoutEvent extends UsuarioEvent {}
+class UsuarioLogoutEvent implements UsuarioEvent {}
 
-class UsuarioEsqueceuSenhaEvent extends UsuarioEvent {
+class UsuarioEsqueceuSenhaEvent implements UsuarioEvent {
   final String email;
 
   UsuarioEsqueceuSenhaEvent({required this.email});

@@ -1,17 +1,19 @@
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 
-class ProdutoEvent {}
+abstract interface class ProdutoEvent {}
 
-class ProdutoLoadEvent extends ProdutoEvent {
+class ProdutoLoadEvent implements ProdutoEvent {
   ProdutoLoadEvent();
 }
 
-class ProdutoSaveEvent extends ProdutoEvent {
+class ProdutoSaveEvent implements ProdutoEvent {
   final Map<String, dynamic> map;
+
   ProdutoSaveEvent(this.map);
 }
 
-class ProdutoRemoveEvent extends ProdutoEvent {
+class ProdutoRemoveEvent implements ProdutoEvent {
   final Produto produto;
+
   ProdutoRemoveEvent(this.produto);
 }
